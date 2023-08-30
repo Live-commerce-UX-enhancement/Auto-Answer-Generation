@@ -31,3 +31,8 @@ def add_info(broadcast_id, information: Information):
 @app.get("/{broadcast_id}/query")
 def get_answer(broadcast_id, q: str):
     return qa_service.get_answer(broadcast_id, q)
+
+
+@app.get("/ping")
+def pingPong():
+    return "pong"
