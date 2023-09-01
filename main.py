@@ -2,10 +2,20 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
 from qaservice import QAService
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 qa_service = QAService()
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class BroadcastInformation(BaseModel):
     type: str
