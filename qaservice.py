@@ -106,17 +106,19 @@ class QAService:
                 qa_list_url_size = f'https://shopping.naver.com/shopv/v1/comments/PRODUCTINQUIRY/{product_id}?size={qa_size}&sellerAnswerYn=true'
                 with urllib.request.urlopen(qa_list_url_size) as url:
                     data = json.loads(url.read().decode())
-                    for content in data['contents']:
-                        if not content['secretYn']:
-                            qa_id = content['id']
-                            qa_detail_url = f'https://shopping.naver.com/shopv/v1/comments/replies/{qa_id}'
-                            with urllib.request.urlopen(qa_detail_url) as qa_url:
-                                qa_detail = json.loads(qa_url.read().decode())
-                                question = content['commentContent']
-                                answer = qa_detail[0]['commentContent']
 
-                                qa_texts.append(product_name + '\n' + question)
-                                qa_metadatas.append({'answer': answer, 'broadcast_id': broadcast_id, 'source': 'qa'})
+                    if data['totalElements'] > 0:
+                        for content in data['contents']:
+                            if not content['secretYn']:
+                                qa_id = content['id']
+                                qa_detail_url = f'https://shopping.naver.com/shopv/v1/comments/replies/{qa_id}'
+                                with urllib.request.urlopen(qa_detail_url) as qa_url:
+                                    qa_detail = json.loads(qa_url.read().decode())
+                                    question = content['commentContent']
+                                    answer = qa_detail[0]['commentContent']
+
+                                    qa_texts.append(product_name + '\n' + question)
+                                    qa_metadatas.append({'answer': answer, 'broadcast_id': broadcast_id, 'source': 'qa'})
 
         if len(qa_texts) > 0:
             self.vector_store.add_texts(texts=qa_texts, metadatas=qa_metadatas)
