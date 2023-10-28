@@ -89,6 +89,11 @@ class QAService:
         # 질의 응답 (QA) 데이터 셋 로드
         self.add_qa_info(broadcast_id, product_info_list)
 
+    def add_admin_answer_info(self, broadcast_id, question, answer):
+        metadata = {'answer': answer, 'broadcast_id': broadcast_id, 'source': 'admin_qa'}
+
+        self.vector_store.add_texts(texts=[question], metadatas=[metadata])
+
     def add_qa_info(self, broadcast_id, product_info_list):
         qa_texts = list()
         qa_metadatas = list()

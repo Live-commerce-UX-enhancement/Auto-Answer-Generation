@@ -98,9 +98,12 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
     connected_room[room_id].append(websocket)
     try:
         while True:
-            data = await websocket.receive_text()
+            data = await websocket.receive()
+            print(data)
+            print(type(data))
 
             # vector store 에 답변 정보 추가
+            qa_service.add_admin_answer_info(room_id, "data", "")
 
             # 메시지를 받았을 때 모든 연결된 클라이언트에게 broadcast 합니다.
             for client in connected_room[room_id]:
