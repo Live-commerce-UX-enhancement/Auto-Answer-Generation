@@ -99,6 +99,7 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
     try:
         while True:
             data = await websocket.receive_json()
+            print("receive test")
             print(data)
             print(type(data))
 
