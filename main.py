@@ -94,8 +94,6 @@ def classify(item : Item):
 
 connected_room = defaultdict(list)
 
-import logging
-
 @app.websocket("/ws/{room_id}")
 async def websocket_endpoint(websocket: WebSocket, room_id: str):
     await websocket.accept()
@@ -103,14 +101,14 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
     try:
         while True:
             json_data = await websocket.receive_text()
-            # data = json.loads(json_data)
-            #
-            # # vector store 에 답변 정보 추가
-            # qa_service.add_admin_answer_info(room_id, data["question"], data["answer"])
+            data = json.loads(json_data)
+
+            # vector store 에 답변 정보 추가
+            qa_service.add_admin_answer_info(room_id, data["question"], data["answer"])
 
             # 메시지를 받았을 때 모든 연결된 클라이언트에게 broadcast 합니다.
             for client in connected_room[room_id]:
-                await client.send_text(json_data + str(type(json_data)))
+                await client.send_text(data["question"] + data["answer"])
     except WebSocketDisconnect:
         # 연결이 닫힌 경우 클라이언트를 connected_clients에서 제거합니다.
         # await websocket.close()
