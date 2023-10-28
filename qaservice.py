@@ -137,7 +137,7 @@ class QAService:
         result = self.vector_store.similarity_search_with_score(query, k=self.vector_store._collection.count(), filter={"broadcast_id":broadcast_id})[:3]
 
         for doc, score in result:
-            if doc.metadata['source'] == 'qa':
+            if doc.metadata['source'] == 'qa' or doc.metadata['source'] == 'admin_qa':
                 doc.page_content = "Question:" + doc.page_content + "\nAnswer:" + doc.metadata['answer']
                 doc.metadata['score'] = score
             else:
