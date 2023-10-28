@@ -110,7 +110,7 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
 
             # 메시지를 받았을 때 모든 연결된 클라이언트에게 broadcast 합니다.
             for client in connected_room[room_id]:
-                await client.send_text(data["question"], data["answer"])
+                await client.send_text(data["question"] + data["answer"])
     except WebSocketDisconnect:
         # 연결이 닫힌 경우 클라이언트를 connected_clients에서 제거합니다.
         # await websocket.close()
