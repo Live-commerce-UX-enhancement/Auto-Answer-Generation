@@ -98,7 +98,7 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
     connected_room[room_id].append(websocket)
     try:
         while True:
-            data = await websocket.receive()
+            data = await websocket.receive_json()
             print(data)
             print(type(data))
 
