@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List
 from qaservice import QAService
 from fastapi.middleware.cors import CORSMiddleware
+from collections import defaultdict
 
 app = FastAPI()
 qa_service = QAService()
@@ -89,12 +90,19 @@ def classify(item : Item):
 
     return result
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
+connected_room = defaultdict(list)
+
+@app.websocket("/ws/{room_id}")
+async def websocket_endpoint(websocket: WebSocket, room_id: str):
     await websocket.accept()
+    connected_room[room_id].append(websocket)
     try:
         while True:
             data = await websocket.receive_text()
-            await websocket.send_text(f"Message text was: {data}")
+            # 메시지를 받았을 때 모든 연결된 클라이언트에게 broadcast 합니다.
+            for client in connected_room[room_id]:
+                await client.send_text(data)
     except WebSocketDisconnect:
+        # 연결이 닫힌 경우 클라이언트를 connected_clients에서 제거합니다.
         await websocket.close()
+        connected_room[room_id].remove(websocket)
