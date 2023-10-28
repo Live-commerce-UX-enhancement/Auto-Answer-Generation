@@ -92,6 +92,8 @@ def classify(item : Item):
 
 connected_room = defaultdict(list)
 
+import logging
+
 @app.websocket("/ws/{room_id}")
 async def websocket_endpoint(websocket: WebSocket, room_id: str):
     await websocket.accept()
@@ -99,9 +101,9 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
     try:
         while True:
             data = await websocket.receive_json()
-            print("receive test")
-            print(data)
-            print(type(data))
+            logging.info("receive test")
+            logging.info(data)
+            logging.info(type(data))
 
             # vector store 에 답변 정보 추가
             qa_service.add_admin_answer_info(room_id, "data", "")
